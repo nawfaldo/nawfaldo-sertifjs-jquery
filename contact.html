@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.2.min.js"></script>
+  </head>
+  <body>
+    <header class="space-x-5 p-5 w-full shadow-md sticky top-0 flex">
+      <a href="/index.html" class="font-light">HOME</a>
+      <a href="/contact.html" class="font-bold">CONTACT</a>
+      <a href="/about.html" class="font-light">ABOUT</a>
+    </header>
+    <main class="m-10 space-y-10">
+      <div>
+        <input type="text" name="nomor" placeholder="nomor" value="" />
+        <button class="p-2 bg-blue-600 rounded text-white add-contact submit">
+          Tambah Kontak
+        </button>
+      </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>NOMOR</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </main>
+    <script>
+      $(function () {
+        $.ajax({
+          url: "https://rest-api-1-eight.vercel.app/reports",
+          type: "GET",
+          success: function (response) {
+            let output = "";
+            response.data.reports.forEach(function (item) {
+              output +=
+                "<tr>" +
+                "<th>" +
+                item.id +
+                "</th>" +
+                "<th>" +
+                item.nomor +
+                "</th>" +
+                "</tr>";
+            });
+            $("tbody").html(output);
+          },
+        });
+
+        $(".submit").click(function () {
+          let nomor = $("input[name=nomor]").val();
+          if (nomor == "") {
+            alert("mohon isi nomor");
+            return false;
+          }
+
+          $.ajax({
+            url: "https://rest-api-1-eight.vercel.app/reports",
+            type: "POST",
+            data: { nomor: nomor },
+            success: function () {
+              $.ajax({
+                url: "https://rest-api-1-eight.vercel.app/reports",
+                type: "GET",
+                success: function (response) {
+                  let output = "";
+                  response.data.reports.forEach(function (item) {
+                    output +=
+                      "<tr>" +
+                      "<th>" +
+                      item.id +
+                      "</th>" +
+                      "<th>" +
+                      item.nomor +
+                      "</th>" +
+                      "</tr>";
+                  });
+                  $("tbody").html(output);
+                },
+              });
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
